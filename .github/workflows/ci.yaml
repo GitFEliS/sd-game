@@ -30,10 +30,12 @@ jobs:
             libxinerama-dev \
             mesa-common-dev \
             libgl1-mesa-dev \
-            libxxf86vm-dev
+            libxxf86vm-dev \
+            xvfb
 
       - name: Install dependencies
         run: go mod download
 
-      - name: Run tests
-        run: go test ./... -v
+      # Запускаем тесты под управлением xvfb, чтобы обеспечить виртуальный дисплей
+      - name: Run tests with xvfb
+        run: xvfb-run -a --server-args='-screen 0 1024x768x24' go test ./... -v
