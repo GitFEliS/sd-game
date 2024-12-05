@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font/basicfont"
 	"image/color"
+	"time"
 )
 
 const (
@@ -14,12 +15,14 @@ const (
 )
 
 type Game struct {
-	Player            *Player
-	Map               *GameMap
-	CurrentLevel      int
-	GameOver          bool
-	IsInventoryOpen   bool
-	SelectedInventory int
+	Player              *Player
+	Map                 *GameMap
+	CurrentLevel        int
+	GameOver            bool
+	IsInventoryOpen     bool
+	SelectedInventory   int
+	lastMonsterMoveTime time.Time
+	monsterMoveInterval time.Duration
 }
 
 func NewGame() *Game {
@@ -27,12 +30,14 @@ func NewGame() *Game {
 	gm := NewGameMap(currentLevel)
 	player := NewPlayer(gm.PlayerStartX, gm.PlayerStartY)
 	return &Game{
-		Player:            player,
-		Map:               gm,
-		CurrentLevel:      currentLevel,
-		GameOver:          false,
-		IsInventoryOpen:   false,
-		SelectedInventory: 0,
+		Player:              player,
+		Map:                 gm,
+		CurrentLevel:        currentLevel,
+		GameOver:            false,
+		IsInventoryOpen:     false,
+		SelectedInventory:   0,
+		lastMonsterMoveTime: time.Now(),
+		monsterMoveInterval: time.Second,
 	}
 }
 
@@ -51,14 +56,20 @@ func (g *Game) Update() error {
 		return nil
 	}
 
+	// Обновляем игрока (логика перемещения игрока и т.п.)
 	g.Player.Update(g)
 
-	// Обновление монстров
-	for _, monster := range g.Map.Monsters {
-		monster.Move(g.Map, g.Player)
+	// Проверяем, пора ли двигать монстров
+	if time.Since(g.lastMonsterMoveTime) >= g.monsterMoveInterval {
+		// Двигаем монстров
+		for _, monster := range g.Map.Monsters {
+			monster.Move(g.Map, g.Player)
+		}
+		// Обновляем время последнего движения монстров
+		g.lastMonsterMoveTime = time.Now()
 	}
 
-	// Проверка достижения выхода
+	// Проверка достижения выхода (если такая есть)
 	if g.Player.X == g.Map.ExitX && g.Player.Y == g.Map.ExitY {
 		g.NextLevel()
 	}

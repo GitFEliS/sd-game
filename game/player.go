@@ -24,8 +24,8 @@ type Player struct {
 }
 
 func NewPlayer(x, y int) *Player {
-	baseHealth := 100
-	baseAttack := 10
+	baseHealth := 200
+	baseAttack := 20
 	return &Player{
 		X:               x,
 		Y:               y,
@@ -97,16 +97,26 @@ func (p *Player) Update(g *Game) {
 }
 
 func (p *Player) AttackMonster(monster *Monster, g *Game) {
+	// Игрок атакует монстра
 	monster.Health -= p.Attack
-	p.Exp += 10 // Получение опыта за убийство монстра
+	// Монстр атакует игрока в ответ (симметричный бой только здесь!)
+	p.Health -= monster.Attack
+	p.Exp += 10 // Опыт за атаку монстра
+
+	// Проверяем, убит ли монстр
 	if monster.Health <= 0 {
-		// Удаление монстра из карты
+		// Удаляем монстра из карты
 		for i, m := range g.Map.Monsters {
 			if m == monster {
 				g.Map.Monsters = append(g.Map.Monsters[:i], g.Map.Monsters[i+1:]...)
 				break
 			}
 		}
+	}
+
+	// Проверяем, умер ли игрок
+	if p.Health <= 0 {
+		g.GameOver = true
 	}
 }
 

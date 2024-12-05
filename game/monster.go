@@ -18,7 +18,7 @@ type Monster struct {
 
 func NewMonster(x, y int) *Monster {
 	health := randInt(20, 60) // Здоровье монстра от 20 до 40
-	attack := randInt(5, 70)  // Атака монстра от 5 до 10
+	attack := randInt(5, 10)  // Атака монстра от 5 до 10
 	cooldown := time.Second   // Период между атаками
 	return &Monster{
 		X:              x,
@@ -31,7 +31,6 @@ func NewMonster(x, y int) *Monster {
 }
 
 func (m *Monster) Move(gm *GameMap, p *Player) {
-	// Простая логика: перемещение в сторону игрока
 	dx, dy := 0, 0
 	if p.X > m.X {
 		dx = 1
@@ -46,18 +45,22 @@ func (m *Monster) Move(gm *GameMap, p *Player) {
 
 	newX, newY := m.X+dx, m.Y+dy
 	if newX >= 0 && newX < gm.Width && newY >= 0 && newY < gm.Height {
+		// Если клетка проходима и не занята другим монстром или предметом
 		if gm.Tiles[newY][newX].Walkable && !gm.IsOccupied(newX, newY) {
-			m.X, m.Y = newX, newY
-		}
-	}
-
-	// Проверка столкновения с игроком и атака с учетом таймера
-	if m.X == p.X && m.Y == p.Y {
-		now := time.Now()
-		if now.Sub(m.LastAttackTime) >= m.AttackCooldown {
-			p.Health -= m.Attack
-			m.LastAttackTime = now
-			fmt.Printf("Player HP: %d\n", p.Health)
+			if newX == p.X && newY == p.Y {
+				// Монстр зашёл на клетку игрока -> односторонняя атака монстра
+				p.Health -= m.Attack
+				if p.Health <= 0 {
+					// Игрок умер, игра окончена
+					// Логика завершения будет в g.Update() или другом месте
+				}
+				// Монстр остаётся на месте, поскольку занял клетку игрока
+				// m.X, m.Y = newX, newY можно оставить, чтобы монстр встал на место игрока
+				m.X, m.Y = newX, newY
+			} else {
+				// Простой шаг монстра
+				m.X, m.Y = newX, newY
+			}
 		}
 	}
 }
