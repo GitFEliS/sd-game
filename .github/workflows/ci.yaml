@@ -22,7 +22,14 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libx11-dev libxrandr-dev libxi-dev libxcursor-dev libxinerama-dev
+          sudo apt-get install -y \
+            libx11-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            mesa-common-dev \
+            libgl1-mesa-dev
 
       - name: Install dependencies
         run: go mod download
