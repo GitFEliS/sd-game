@@ -183,7 +183,7 @@ func (g *Game) DrawHints(screen *ebiten.Image) {
 
 func (g *Game) DrawInventory(screen *ebiten.Image) {
 	// Рисуем полупрозрачный фон для инвентаря
-	for y := 150; y < 650; y++ { // Изменена граница до 650 для соответствия ScreenHeight=800
+	for y := 150; y < 650; y++ {
 		for x := 150; x < 650; x++ {
 			screen.Set(x, y, color.RGBA{0, 0, 0, 200}) // Полупрозрачный черный фон
 		}

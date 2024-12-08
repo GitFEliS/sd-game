@@ -83,7 +83,7 @@ func (p *Player) Update(g *Game) {
 	}
 
 	// Обработка ввода для открытия инвентаря
-	if inpututil.IsKeyJustPressed(ebiten.KeyI) { // Изменили на 'I' для инвентаря
+	if inpututil.IsKeyJustPressed(ebiten.KeyI) {
 		g.IsInventoryOpen = !g.IsInventoryOpen
 		if !g.IsInventoryOpen {
 			g.SelectedInventory = 0
@@ -122,7 +122,6 @@ func (p *Player) AttackMonster(monster *Monster, g *Game) {
 
 func (p *Player) PickUpItem(item *Item, g *Game) {
 	p.Inventory = append(p.Inventory, item)
-	// Можно добавить уведомление о подборе предмета
 }
 
 func (p *Player) EquipItem(item *Item) {
