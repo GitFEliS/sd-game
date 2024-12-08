@@ -47,20 +47,7 @@ func (m *Monster) Move(gm *GameMap, p *Player) {
 	if newX >= 0 && newX < gm.Width && newY >= 0 && newY < gm.Height {
 		// Если клетка проходима и не занята другим монстром или предметом
 		if gm.Tiles[newY][newX].Walkable && !gm.IsOccupied(newX, newY) {
-			if newX == p.X && newY == p.Y {
-				// Монстр зашёл на клетку игрока -> односторонняя атака монстра
-				p.Health -= m.Attack
-				if p.Health <= 0 {
-					// Игрок умер, игра окончена
-					// Логика завершения будет в g.Update() или другом месте
-				}
-				// Монстр остаётся на месте, поскольку занял клетку игрока
-				// m.X, m.Y = newX, newY можно оставить, чтобы монстр встал на место игрока
-				m.X, m.Y = newX, newY
-			} else {
-				// Простой шаг монстра
-				m.X, m.Y = newX, newY
-			}
+			m.X, m.Y = newX, newY
 		}
 	}
 }
