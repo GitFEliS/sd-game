@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -111,6 +112,11 @@ func (p *Player) AttackMonster(monster *Monster, g *Game) {
 				g.Map.Monsters = append(g.Map.Monsters[:i], g.Map.Monsters[i+1:]...)
 				break
 			}
+		}
+	} else {
+		// Монстр выжил, попробуем наложить эффект конфузии с шансом 25%
+		if rand.Intn(100) < 75 {
+			monster.Confuse()
 		}
 	}
 
