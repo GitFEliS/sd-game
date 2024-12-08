@@ -1,0 +1,41 @@
+name: Go CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            mesa-common-dev \
+            libgl1-mesa-dev \
+            libxxf86vm-dev \
+            xvfb
+
+      - name: Install dependencies
+        run: go mod download
+
+      # Запускаем тесты под управлением xvfb, чтобы обеспечить виртуальный дисплей
+      - name: Run tests with xvfb
+        run: xvfb-run -a --server-args='-screen 0 1024x768x24' go test ./... -v
